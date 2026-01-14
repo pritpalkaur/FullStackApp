@@ -1,2 +1,35 @@
-<h2>Product Works!</h2>
-<p>This is your product page.</p>
+<h2>Product List</h2>
+
+<table border="1" cellpadding="8">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Actions</th>
+  </tr>
+
+  <tr *ngFor="let p of products">
+    <td>{{ p.id }}</td>
+    <td>{{ p.name }}</td>
+    <td>{{ p.price }}</td>
+    <td>
+      <button (click)="editProduct(p)">Edit</button>
+      <button (click)="deleteProduct(p.id)">Delete</button>
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<h3>Add / Edit Product</h3>
+
+<label>ID:</label>
+<input type="number" [(ngModel)]="newProduct.id"><br>
+
+<label>Name:</label>
+<input type="text" [(ngModel)]="newProduct.name"><br>
+
+<label>Price:</label>
+<input type="number" [(ngModel)]="newProduct.price"><br>
+
+<button (click)="addProduct()">Save</button>
