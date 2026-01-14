@@ -1,6 +1,9 @@
-p {
-  color: red;
+table {
+  width: 100%;
+  margin-bottom: 20px;
 }
-div {
-  color: rgb(55, 30, 167);
+
+mat-form-field {
+  width: 200px;
+  margin-right: 15px;
 }
