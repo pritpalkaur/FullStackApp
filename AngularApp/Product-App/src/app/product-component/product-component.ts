@@ -2,22 +2,20 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
 import { Product } from '../models/product';
-
+import { ProductService } from '../services/product.service';
 @Component({
   selector: 'app-product',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    HttpClientModule,
+       HttpClientModule,   // ✅ must be here
     MatTableModule,
     MatButtonModule,
     MatIconModule,
@@ -25,90 +23,42 @@ import { Product } from '../models/product';
     MatInputModule
   ],
   templateUrl: './product-component.html',
-  styleUrl: './product-component.css',
+  styleUrls: ['./product-component.css'] // ✅ plural form
 })
 export class ProductComponent {
   displayedColumns: string[] = ['id', 'name', 'price', 'actions'];
   products: Product[] = [];
   newProduct: Product = { id: 0, name: '', price: 0 };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private productService: ProductService) {}
 
-  ngOnInit() {
-    this.http.get<Product[]>('assets/products.json')
-      .subscribe(data => this.products = data);
+ ngOnInit(): void {
+    this.loadProducts();
   }
 
-  addProduct() {
-    this.products.push({ ...this.newProduct });
-    this.newProduct = { id: 0, name: '', price: 0 };
+  loadProducts(): void {
+    this.productService.getProducts().subscribe({
+      next: (data) => (this.products = data),
+      error: (err) => console.error('Error loading products:', err)
+    });
   }
 
-  deleteProduct(id: number) {
-    this.products = this.products.filter(p => p.id !== id);
+  addProduct(): void {
+    this.productService.addProduct(this.newProduct).subscribe({
+      next: (addedProduct) => {
+        this.products.push(addedProduct);
+        this.newProduct = { id: 0, name: '', price: 0 };
+      },
+      error: (err) => console.error('Error adding product:', err)
+    });   
   }
 
-  editProduct(product: Product) {
+  deleteProduct(id: number): void {
+    this.products = this.products.filter((p) => p.id !== id);
+  }
+
+  editProduct(product: Product): void {
     this.newProduct = { ...product };
     this.deleteProduct(product.id);
   }
 }
-
-
-// import { Component } from '@angular/core';
-// import { HttpClient,HttpClientModule } from '@angular/common/http';
-// import { Product } from '../models/product';
-// import { FormsModule } from '@angular/forms';
-// import { CommonModule } from '@angular/common';
-
-// @Component({
-//   selector: 'app-product',
-//   standalone: true,
-//   imports: [
-//     HttpClientModule,
-//     FormsModule,
-//     CommonModule
-//   ],   // <-- Add this
-//   templateUrl: './product-component.html',
-//   styleUrl: './product-component.css',
-// })
-
-// export class ProductComponent {
-
-//   products: Product[] = [];
-//   newProduct: Product = { id: 0, name: '', price: 0 };
-
-//   constructor(private http: HttpClient) {}
-
-//   ngOnInit() {
-//     this.http.get<Product[]>('assets/products.json')
-//       .subscribe(data => this.products = data);
-//   }
-
-//   addProduct() {
-//     this.products.push({ ...this.newProduct });
-//     this.newProduct = { id: 0, name: '', price: 0 };
-//   }
-
-//   deleteProduct(id: number) {
-//     this.products = this.products.filter(p => p.id !== id);
-//   }
-
-//   editProduct(product: Product) {
-//     this.newProduct = { ...product };
-//     this.deleteProduct(product.id);
-//   }
-// } 
-
-// // import { Component } from '@angular/core';
-
-// // @Component({
-// //   selector: 'app-product-component',
-// //    standalone: true,
-// //   imports: [],
-// //   templateUrl: './product-component.html',
-// //   styleUrl: './product-component.css',
-// // })
-// // export class ProductComponent {
-
-// // }
