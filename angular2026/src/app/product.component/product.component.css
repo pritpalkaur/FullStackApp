@@ -1,0 +1,12 @@
+.form-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+mat-form-field {
+  width: 200px;
+}
+table {
+  width: 100%;
+}

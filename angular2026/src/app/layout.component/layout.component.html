@@ -1,0 +1,16 @@
+<mat-toolbar color="primary">
+  <span>Angular 2026 Dashboard</span>
+  <span class="spacer"></span>
+
+  <span *ngIf="username">Welcome, {{ username }}</span>
+  <a mat-button href="/home">Home</a>
+  <a mat-button href="/products">Products</a>
+  <a mat-button href="/orders">Orders</a>
+  <a mat-button href="/reports">Reports</a>
+  <a mat-button href="/settings">Settings</a>
+  <a amat-button *ngIf="username" (click)="logout()">Logout</a>
+</mat-toolbar>
+
+<main class="content">
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,17 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+a[mat-button] {
+  color: rgb(198, 236, 162);
+  text-decoration: none;
+}
+mat-toolbar {
+  background-color: #485058; /* deep blue */
+  color: rgb(250, 251, 253);
+}
