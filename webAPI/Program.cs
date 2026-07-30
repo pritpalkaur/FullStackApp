@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using webAPI.Business.Interfaces;
 using webAPI.Business.Services;
 using webAPI.Data;
@@ -81,7 +81,14 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
+// ✅ Add CORS policy for Angular
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy => policy.WithOrigins("http://localhost:4200") // Angular dev server
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -93,10 +100,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// ✅ Serve static files first
+app.UseStaticFiles();
+app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.Run();

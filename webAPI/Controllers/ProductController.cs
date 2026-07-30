@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webAPI.Business.Interfaces;
 using webAPI.DTOs;
-using Microsoft.AspNetCore.Authorization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace webAPI.Controllers
 {
@@ -11,9 +12,10 @@ namespace webAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _service;
-
-        public ProductController(IProductService service)
+        private readonly IWebHostEnvironment _env; 
+        public ProductController(IWebHostEnvironment env, IProductService service)
         {
+            _env = env;
             _service = service;
         }
 
@@ -24,13 +26,30 @@ namespace webAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
+
             var product = await _service.GetByIdAsync(id);
             return product == null ? NotFound() : Ok(product);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] ProductCreateDto dto, IFormFile image)
         {
+            string imagePath = null;
+
+            if (image != null && image.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+                // ✅ Construct full URL for frontend
+                var fileName = Path.GetFileName(image.FileName);  
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                imagePath = $"{baseUrl}/uploads/{fileName}";
+
+                dto.ImageUrl = imagePath;
+            }
             var created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }

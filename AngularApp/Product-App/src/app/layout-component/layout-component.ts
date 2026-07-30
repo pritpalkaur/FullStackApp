@@ -6,17 +6,17 @@ import { CommonModule } from '@angular/common';
   selector: 'app-layout',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+  templateUrl: './layout-component.html',
+  styleUrls: ['./layout-component.css']
 })
 export class LayoutComponent {
-  isLoggedIn = false;
+  // isLoggedIn = false;
 
-  login() {
-    this.isLoggedIn = true;
-  }
+  // login() {
+  //   this.isLoggedIn = true;
+  // }
 
-  logout() {
-    this.isLoggedIn = false;
-  }
+  // logout() {
+  //   this.isLoggedIn = false;
+  // }
 }
