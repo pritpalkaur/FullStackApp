@@ -1,61 +1,89 @@
-<h2>Product List</h2>
-<!-- ✅ Create Product Form -->
-<div class="form-container">
-<mat-form-field appearance="outline">
-  <mat-label>Name</mat-label>
-  <input matInput [(ngModel)]="newProduct.name" />
-</mat-form-field>
-
-<mat-form-field appearance="outline">
-  <mat-label>Price</mat-label>
-  <input matInput type="number" [(ngModel)]="newProduct.price" />
-</mat-form-field>
-
-<mat-form-field appearance="outline">
-  <mat-label>Stock</mat-label>
-  <input matInput type="number" [(ngModel)]="newProduct.stock" />
-</mat-form-field>
-
-<input type="file" (change)="onFileSelected($event)" />
-
-<button mat-raised-button color="primary" (click)="createProduct()">Create</button>
-</div>
-
+<!-- Product Table -->
 <table mat-table [dataSource]="products" class="mat-elevation-z8">
-    <ng-container matColumnDef="image">
-  <th mat-header-cell *matHeaderCellDef> Image </th>
-  <td mat-cell *matCellDef="let product">
-    <img [src]="product.imageUrl" alt="{{product.name}}" width="60" />
-  </td>
-</ng-container>
 
-  <!-- Name Column -->
+  <!-- Name -->
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef> Name </th>
     <td mat-cell *matCellDef="let product"> {{ product.name }} </td>
   </ng-container>
 
-  <!-- Price Column -->
+  <!-- Price -->
   <ng-container matColumnDef="price">
     <th mat-header-cell *matHeaderCellDef> Price </th>
-    <td mat-cell *matCellDef="let product"> {{ product.price }} </td>
+    <td mat-cell *matCellDef="let product"> {{ product.price | currency }} </td>
   </ng-container>
 
-  <!-- Stock Column -->
+  <!-- Stock -->
   <ng-container matColumnDef="stock">
     <th mat-header-cell *matHeaderCellDef> Stock </th>
     <td mat-cell *matCellDef="let product"> {{ product.stock }} </td>
   </ng-container>
 
-  <!-- Actions Column -->
+  <!-- Image -->
+  <ng-container matColumnDef="image">
+    <th mat-header-cell *matHeaderCellDef> Image </th>
+    <td mat-cell *matCellDef="let product">
+      <img [src]="product.imageUrl" alt="{{product.name}}" width="80" />
+    </td>
+  </ng-container>
+
+  <!-- Actions -->
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let product">
-      <button mat-button (click)="editProduct(product)">Edit</button>
-      <button mat-button (click)="deleteProduct(product)">Delete</button>
+      <button mat-button color="primary" (click)="editProduct(product)">Edit</button>
+      <button mat-button color="warn" (click)="deleteProduct(product)">Delete</button>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
+<hr />
+
+<!-- Product Form -->
+<form>
+  <mat-form-field>
+    <input matInput placeholder="Name" [(ngModel)]="isEditing ? selectedProduct.name : newProduct.name" name="name" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput type="number" placeholder="Price" [(ngModel)]="isEditing ? selectedProduct.price : newProduct.price" name="price" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput type="number" placeholder="Stock" [(ngModel)]="isEditing ? selectedProduct.stock : newProduct.stock" name="stock" />
+  </mat-form-field>
+
+  <input type="file" (change)="onFileSelected($event)" />
+
+  <!-- Toggle between Create and Update -->
+  <button mat-raised-button color="primary" *ngIf="!isEditing" (click)="createProduct()">Create</button>
+  <button mat-raised-button color="accent" *ngIf="isEditing" (click)="updateProduct()">Update</button>
+</form>
+<!-- Create mode -->
+<div *ngIf="!isEditing">
+  <mat-form-field>
+    <input matInput placeholder="Name" [(ngModel)]="newProduct.name" name="name" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Price" [(ngModel)]="newProduct.price" name="price" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Stock" [(ngModel)]="newProduct.stock" name="stock" />
+  </mat-form-field>
+</div>
+
+<!-- Edit mode -->
+<div *ngIf="isEditing">
+  <mat-form-field>
+    <input matInput placeholder="Name" [(ngModel)]="selectedProduct.name" name="editName" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Price" [(ngModel)]="selectedProduct.price" name="editPrice" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Stock" [(ngModel)]="selectedProduct.stock" name="editStock" />
+  </mat-form-field>
+</div>

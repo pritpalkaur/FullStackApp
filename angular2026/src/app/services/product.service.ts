@@ -54,9 +54,24 @@ createProductWithImage(product: any, file?: File): Observable<any> {
   );
 }
   // Update product
-  updateProduct(id: number, product: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, product);
+updateProduct(id: number, product: any, file?: File): Observable<any> {
+  const formData = new FormData();
+  formData.append('name', product.name);
+  formData.append('price', product.price.toString());
+  formData.append('stock', product.stock.toString());
+
+  if (file) {
+    formData.append('image', file);
   }
+
+  return this.http.put<any>(`${this.apiUrl}/${id}`, formData).pipe(
+    tap((res) => console.log('✅ Product updated:', res)),
+    catchError((err) => {
+      console.error('❌ Error updating product:', err);
+      return throwError(() => err);
+    })
+  );
+}
 
   // Delete product
   deleteProduct(id: number): Observable<any> {

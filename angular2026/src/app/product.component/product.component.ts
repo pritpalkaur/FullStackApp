@@ -29,8 +29,13 @@ export class ProductComponent implements OnInit {
   products: Product[] = [];
   displayedColumns: string[] = ['name', 'price', 'stock', 'image',  'actions'];
  // ✅ form model
+  // form models
   newProduct = { name: '', price: 0, stock: 0 };
-  
+  selectedProduct: any = null;
+  isEditing = false;
+  // allow null to be assigned when clearing the selected file
+  selectedFile: File | null = null;
+
   constructor(private productService: productService,
     private snackBar: MatSnackBar) {}
 
@@ -47,7 +52,7 @@ export class ProductComponent implements OnInit {
       error: (err) => console.error('Error fetching products', err)
     });
   }
-selectedFile: File | null = null;
+
 
 onFileSelected(event: any): void {
   this.selectedFile = event.target.files[0];
@@ -69,11 +74,41 @@ createProduct(): void {
   }
 }
 
-   // ✅ Add edit method
-  editProduct(product: any): void {
-    console.log('Editing product:', product);
-    // You could navigate to an edit form or open a dialog here
-  }
+// Called when user clicks "Edit"
+editProduct(product: Product): void {
+  console.log('Editing product:', product);
+
+  // Copy product into a local object bound to your form
+  this.selectedProduct = { ...product };
+
+  // Switch to edit mode so template shows Update button
+  this.isEditing = true;
+
+  // Reset any previously selected file
+  this.selectedFile = undefined;
+}
+
+// Called when user clicks "Update"
+updateProduct(): void {
+  if (!this.selectedProduct) return;
+
+  this.productService.updateProduct(
+    this.selectedProduct.id,
+    this.selectedProduct,
+    this.selectedFile
+  ).subscribe({
+    next: (res) => {
+      console.log('✅ Product updated:', res);
+      this.snackBar.open('Product updated successfully!', 'Close', { duration: 3000 });
+      this.isEditing = false;
+      this.selectedProduct = null;
+      this.selectedFile = undefined;
+      this.loadProducts(); // refresh list
+    },
+    error: (err) => console.error('❌ Error updating product:', err)
+  });
+}
+
 
   // ✅ Add delete method
   deleteProduct(product: any): void {
